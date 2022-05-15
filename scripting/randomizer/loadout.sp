@@ -397,43 +397,7 @@ void Loadout_RandomizeWeapon(RandomizedLoadout eLoadout)
 	else if (iMinCount <= iSlotMinCount)
 		iMinCount = 0;
 	
-	if (eInfo.bDefaultClass)
-	{
-		for (int iClass = CLASS_MIN; iClass <= CLASS_MAX; iClass++)
-		{
-			int iSlotCount[WeaponSlot_Melee+1];
-			iSlotCount = eInfo.iCountSlot;
-			
-			for (int i = 0; i < iMinCount; i++)
-			{
-				RandomizedWeapon eWeapon;
-				eWeapon.Reset();
-				eWeapon.iIndex = Weapons_GetRandomIndex(view_as<TFClassType>(iClass));
-				eWeapon.iSlot = TF2_GetSlotFromIndex(eWeapon.iIndex, view_as<TFClassType>(iClass));
-				eLoadout.AddWeapon(eWeapon, iClass);
-				
-				if (WeaponSlot_Primary <= eWeapon.iSlot <= WeaponSlot_Melee && iSlotCount[eWeapon.iSlot] > 0)
-				{
-					//General random used one of min slot count, allow another general random
-					iSlotCount[eWeapon.iSlot]--;
-					iMinCount++;
-				}
-			}
-			
-			//Fill remaining as force slot
-			RandomizedWeapon eWeapon;
-			eWeapon.Reset();
-			for (eWeapon.iSlot = WeaponSlot_Primary; eWeapon.iSlot <= WeaponSlot_Melee; eWeapon.iSlot++)
-			{
-				for (int i = 0; i < iSlotCount[eWeapon.iSlot]; i++)
-				{
-					eWeapon.iIndex = Weapons_GetRandomIndex(view_as<TFClassType>(iClass), eWeapon.iSlot);
-					eLoadout.AddWeapon(eWeapon, iClass);
-				}
-			}
-		}
-	}
-	else
+	for (int iClass = CLASS_MIN; iClass <= CLASS_MAX; iClass++)
 	{
 		int iSlotCount[WeaponSlot_Melee+1];
 		iSlotCount = eInfo.iCountSlot;
@@ -442,17 +406,9 @@ void Loadout_RandomizeWeapon(RandomizedLoadout eLoadout)
 		{
 			RandomizedWeapon eWeapon;
 			eWeapon.Reset();
-			eWeapon.iIndex = Weapons_GetRandomIndex();
-			
-			//Pick random slot
-			do
-			{
-				eWeapon.iSlot = TF2_GetSlotFromIndex(eWeapon.iIndex, TF2_GetRandomClass());
-			}
-			while (eWeapon.iSlot == -1);
-			
-			for (int iClass = CLASS_MIN; iClass <= CLASS_MAX; iClass++)
-				eLoadout.AddWeapon(eWeapon, iClass);
+			eWeapon.iIndex = Weapons_GetRandomIndex(view_as<TFClassType>(iClass));
+			eWeapon.iSlot = TF2_GetSlotFromIndex(eWeapon.iIndex, view_as<TFClassType>(iClass));
+			eLoadout.AddWeapon(eWeapon, iClass);
 			
 			if (WeaponSlot_Primary <= eWeapon.iSlot <= WeaponSlot_Melee && iSlotCount[eWeapon.iSlot] > 0)
 			{
@@ -469,9 +425,8 @@ void Loadout_RandomizeWeapon(RandomizedLoadout eLoadout)
 		{
 			for (int i = 0; i < iSlotCount[eWeapon.iSlot]; i++)
 			{
-				eWeapon.iIndex = Weapons_GetRandomIndex(TFClass_Unknown, eWeapon.iSlot);
-				for (int iClass = CLASS_MIN; iClass <= CLASS_MAX; iClass++)
-					eLoadout.AddWeapon(eWeapon, iClass);
+				eWeapon.iIndex = Weapons_GetRandomIndex(view_as<TFClassType>(iClass), eWeapon.iSlot);
+				eLoadout.AddWeapon(eWeapon, iClass);
 			}
 		}
 	}
